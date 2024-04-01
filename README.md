@@ -5,31 +5,25 @@ This is a partial integral differential equation solver based on deep learning.
 
 ## Introduction
 Consider the following second-order semilinear parabolic partial differential equation.
-$$
-\left\{
+$$\left\{
 \begin{aligned}
 -\partial_tu-\mathcal{L}u-f(\cdot,\cdot,u,\sigma^\top\nabla_x u) & =0,    & (t,x) & \in[0,T]\times\mathbb{R}^d \\
 u(T,x)                                                           & =g(x), & x     & \in\mathbb{R}^d
 \end{aligned}
-\right.
-$$
+\right.$$
 
 
 Here is the translation:
 
 Let $d\geq1$ be the dimension, $T>0$ be the terminal condition, $g:\mathbb{R}^d\mapsto\mathbb{R}$, and $f:[0,T]\times\mathbb{R}^d\times\mathbb{R}\times\mathbb{R}^d\times\mathbb{R}\mapsto\mathbb{R}$. The differential operator $\mathcal{L}$ describes the evolution of the function $u$ with respect to time $t$ and space $x$, where the first term is the diffusion term, the second term is the convection term, and the third term is the integral term, defined specifically as follows,
-$$
-\begin{aligned}
+$$\begin{aligned}
     \mathcal{L}u := & \; \frac{1}{2}\mathrm{Tr}(\sigma\sigma^\top\nabla_x^2u)+\langle b,\nabla_xu \rangle          \\
                     & + \int_E (u(t,x+\beta(t,x,e)) -u(t,x) - \langle \nabla_x u, \beta(t,x,e)\rangle )\lambda(de)
-\end{aligned}
-$$
+\end{aligned}$$
 where $\mathrm{Tr}(\cdot)$ denotes the trace of a matrix, $\sigma:[0,T]\times\mathbb{R}^d\mapsto\mathbb{M}^d$ is a matrix function, $\nabla_x^2u$ is the Hessian matrix of $u$, $\langle \cdot,\cdot \rangle$ denotes the inner product, and $b(t,x):[0,T]\times\mathbb{R}^d\mapsto \mathbb{R}^d$ is a vector function.
 
 For the integral term, define the random variable space $E \triangleq \mathbb{R}^l\setminus\{0\}$, $\beta(t,x,e) :[0,T]\times\mathbb{R}^d\times E\mapsto \mathbb{R}^d$ is a vector function. Let $\mathcal{E}$ be the Borel field corresponding to $E$, and let the $\sigma$-finite measure $\lambda(de)$ on $(E,\mathcal{E})$ satisfy:
-$$
-\int_E (1\wedge |e|^2) \lambda(de) <\infty,
-$$
+$$\int_E (1\wedge |e|^2) \lambda(de) <\infty,$$
 where $|\cdot|$ denotes the $L^2$ norm.
 
 ## Methodology
