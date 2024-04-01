@@ -15,7 +15,6 @@ class CheckPoint(tf.train.Checkpoint):
 
 def dump_model(model,filepath):
     logging.info(f'Model dumped in {filepath}')
-    # model.save(filepath)
     model.save(filepath, save_format='tf')
 
 def save_trainHistory(history,dir:str):
@@ -35,36 +34,19 @@ def Set_Seed(random_seed:int=42):
     os.environ['TF_DETERMINISTIC_OPS'] = '1' # set random seed for tensorflow-gpu
 
 def custom_rolling_mean(df, column, window_size):  
-    """  
-    计算滑动平均值，同时去除窗口中的最大值和最小值。  
-      
-    参数:  
-        df (pd.DataFrame): 输入的DataFrame。  
-        column (str): 要计算滑动平均的列名。  
-        window_size (int): 滑动窗口的大小。  
-          
-    返回:  
-        pd.Series: 包含滑动平均值的Series。  
-    """  
-    # 初始化结果列表  
     results = []  
       
-    # 遍历DataFrame的每一行  
     for i in range(len(df)):  
-        # 获取当前窗口的数据  
         window_data = df[column].iloc[max(0, i - window_size + 1):i + 1]  
           
-        # 如果窗口中的数据少于窗口大小，则跳过  
         if len(window_data) < window_size:  
             results.append(np.nan)  
             continue  
           
-        # 去除窗口中的最大值和最小值，然后计算平均值  
         window_data_filtered = window_data[window_data != window_data.max()]  
         window_data_filtered = window_data_filtered[window_data_filtered != window_data_filtered.max()]  
         results.append(window_data_filtered.mean())  
       
-    # 将结果转换为Series并返回  
     return pd.Series(results, index=df.index) 
 
 def init_saving_path(rootDir,pde_config=None,model_config=None):

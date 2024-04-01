@@ -1,26 +1,5 @@
 import tensorflow as tf
 
-class Model_Set(object):
-    def __init__(self,total_model_config:list) -> None:
-        self.total_model_config = total_model_config
-        self.models = {}
-        for model_config in total_model_config:
-            self.models[model_config['name']] = self.Create_Model(self,model_config)
-        self.models_trainable_variables = None
-
-    def Create_Model(self,model_config):
-        return FeedForwardNet(model_config['num_hiddens'],model_config['activate_fun'],model_config['output_dim'])
-    
-    def Get_Trainable_Variables(self):
-        if not self.models_trainable_variables:
-            all_variables = []
-            for key,model in self.models.items():
-                all_variables.extend(model.trainable_variables)
-            self.models_trainable_variables = all_variables
-        return self.models_trainable_variables
-
-
-
 class FeedForwardNet(tf.keras.Model):
     def __init__(self, num_hiddens, activate_fun, output_dim:int = 1):
         super().__init__()

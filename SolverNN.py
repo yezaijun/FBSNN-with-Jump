@@ -9,10 +9,20 @@ from Tools import *
 DELTA_CLIP = 50.0
 tf.keras.backend.set_floatx('float64')
 
-class FBSNN(object): # Forward-Backward Stochastic Neural Network
+class FBSNNJ(object): # Forward-Backward Stochastic Neural Network with Jump
     def __init__(self, terminal_time,
                        sample_size, num_time_interval, dim,
                        model:tf.keras.Model):
+        """
+        Initialize the Forward-Backward Stochastic Neural Network with Jump (FBSNNJ).
+
+        Args:
+        - terminal_time: The terminal time of the simulation.
+        - sample_size: Number of trajectories to generate.
+        - num_time_interval: Number of time intervals.
+        - dim: Number of dimensions.
+        - model: The neural network model for approximation.
+        """
         
         self.terminal_time = terminal_time # terminal time
         
@@ -47,6 +57,17 @@ class FBSNN(object): # Forward-Backward Stochastic Neural Network
               logging_verbose:bool=True,
               checkpoint:CheckPoint=None,
               summary_writer = None):
+        """
+        Train the FBSNNJ model.
+
+        Args:
+        - num_iterations: Number of training iterations.
+        - optimizer: The optimizer for training.
+        - logging_frequency: Frequency of logging.
+        - logging_verbose: Whether to log verbose information.
+        - checkpoint: Object for managing checkpoints.
+        - summary_writer: Object for writing summaries.
+        """
         self.optimizer:tf.keras.optimizers.Optimizer = optimizer
         
         start_time = time.time()
@@ -65,6 +86,17 @@ class FBSNN(object): # Forward-Backward Stochastic Neural Network
         self.trained_time += time.time() - start_time
 
     def loss_function(self,input_sample,PDE_Fitter,training:bool=False):
+        """
+        Compute the loss function of the FBSNN.
+
+        Args:
+        - input_sample: Input sample for loss computation.
+        - PDE_Fitter: The model for fitting the PDE.
+        - training: Whether the model is in training mode.
+
+        Returns:
+        - Loss value.
+        """
         dw,dt = input_sample['dw'],input_sample['dt']
         t,x = input_sample['t'],input_sample['x']
         element_jump_sample = input_sample['element_jump']
@@ -90,11 +122,16 @@ class FBSNN(object): # Forward-Backward Stochastic Neural Network
         delta = y1_total - y_total
 
         loss = tf.reduce_mean(tf.where(tf.abs(delta) < DELTA_CLIP, tf.square(delta), 2 * DELTA_CLIP * tf.abs(delta) - DELTA_CLIP ** 2))
-        # loss = tf.reduce_sum(tf.where(tf.abs(delta) < DELTA_CLIP, tf.square(delta), 2 * DELTA_CLIP * tf.abs(delta) - DELTA_CLIP ** 2))
         return loss
     
     @tf.function           
     def train_step(self,input_sample):
+        """
+        Perform a single training step.
+
+        Args:
+        - input_sample: Input sample for training.
+        """
         with tf.GradientTape(persistent=True) as tape:
             loss = self.loss_function(input_sample,PDE_Fitter=self.model_approximate, training=True)
         grad = tape.gradient(loss, self.model.trainable_variables)
@@ -108,7 +145,6 @@ class FBSNN(object): # Forward-Backward Stochastic Neural Network
         model_relative_error = self.model_relative_error(input_sample)
         mean_relative_error = model_relative_error['mean_relative_error']
         t0_relative_error = model_relative_error['t0_relative_error']
-        # lr = self.optimizer.learning_rate(step).numpy()
         lr = self.optimizer.learning_rate(step).numpy() if callable(self.optimizer.learning_rate) else self.optimizer.learning_rate.numpy()
 
         data_list = [step, loss, mean_relative_error,t0_relative_error ,elapsed_time ,lr]

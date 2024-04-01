@@ -5,9 +5,9 @@ import scipy.stats as ss
 
 import Tools
 from Network import *
-from SolverNN import FBSNN
+from SolverNN import FBSNNJ
 
-class oneDimPureJump(FBSNN):
+class oneDimPureJump(FBSNNJ):
     def __init__(self, T, sample_size, num_time_interval, dim,model):
         super().__init__(T, sample_size, num_time_interval, dim,  model)
         self.lam = 0.3
