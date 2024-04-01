@@ -5,6 +5,7 @@ This is a partial integral differential equation solver based on deep learning.
 
 ## Introduction
 Consider the following second-order semilinear parabolic partial differential equation.
+
 $$\left\{
 \begin{aligned}
 -\partial_tu-\mathcal{L}u-f(\cdot,\cdot,u,\sigma^\top\nabla_x u) & =0,    & (t,x) & \in[0,T]\times\mathbb{R}^d \\
@@ -12,8 +13,6 @@ u(T,x)                                                           & =g(x), & x   
 \end{aligned}
 \right.$$
 
-
-Here is the translation:
 
 Let $d\geq1$ be the dimension, $T>0$ be the terminal condition, $g:\mathbb{R}^d\mapsto\mathbb{R}$, and $f:[0,T]\times\mathbb{R}^d\times\mathbb{R}\times\mathbb{R}^d\times\mathbb{R}\mapsto\mathbb{R}$. The differential operator $\mathcal{L}$ describes the evolution of the function $u$ with respect to time $t$ and space $x$, where the first term is the diffusion term, the second term is the convection term, and the third term is the integral term, defined specifically as follows,
 $$\begin{aligned}
